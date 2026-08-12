@@ -1,0 +1,87 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@theme {
+  --font-serif: 'Cormorant Garamond', serif;
+  --font-sans: 'Plus Jakarta Sans', sans-serif;
+}
+
+:root {
+  --blush: #f7e5e8;
+  --blush-deep: #eccfd6;
+  --rose: #d98a9b;
+  --rose-deep: #b96b7e;
+  --beige: #f5efe6;
+  --beige-deep: #e8ddca;
+  --cream: #fffaf6;
+  --ink: #3a2e2b;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background-color: #fffaf6;
+  color: #3a2e2b;
+  -webkit-font-smoothing: antialiased;
+}
+
+.font-serif {
+  font-family: 'Cormorant Garamond', serif;
+}
+
+/* Reveal-on-scroll animation */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Floating blob keyframes */
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-22px) rotate(6deg); }
+}
+@keyframes float-slower {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(18px) rotate(-5deg); }
+}
+.animate-float-slow { animation: float-slow 9s ease-in-out infinite; }
+.animate-float-slower { animation: float-slower 12s ease-in-out infinite; }
+
+/* Soft pulse for the AI badge */
+@keyframes soft-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(217, 138, 155, 0.45); }
+  50% { box-shadow: 0 0 0 14px rgba(217, 138, 155, 0); }
+}
+.animate-soft-pulse { animation: soft-pulse 2.6s ease-in-out infinite; }
+
+/* Marquee for the trust bar */
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.animate-marquee { animation: marquee 28s linear infinite; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: #f7e5e8; }
+::-webkit-scrollbar-thumb {
+  background: #d98a9b;
+  border-radius: 999px;
+  border: 2px solid #f7e5e8;
+}
+::-webkit-scrollbar-thumb:hover { background: #b96b7e; }
