@@ -7,38 +7,47 @@ dotenv.config();
 
 const app = express();
 
-app.use((req, res, next) => {
-  res.header(
-    "Access-Control-Allow-Origin",
-    "https://glowcare-1.onrender.com"
-  );
-  res.header(
-    "Access-Control-Allow-Methods",
-    "GET, POST, OPTIONS"
-  );
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Content-Type, Authorization"
-  );
+// ===============================
+// CORS CONFIGURATION
+// ===============================
 
-  if (req.method === "OPTIONS") {
-    return res.sendStatus(204);
-  }
+app.use(
+  cors({
+    origin: "https://glowcare-1.onrender.com",
+    methods: ["GET", "POST", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 
-  next();
-});
+app.options("*", cors());
+
+// ===============================
+// BODY PARSER
+// ===============================
 
 app.use(express.json({ limit: "10mb" }));
+
+// ===============================
+// GEMINI AI
+// ===============================
 
 const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY,
 });
+
+// ===============================
+// TEST ROUTE
+// ===============================
 
 app.get("/", (req, res) => {
   res.json({
     message: "GlowCare backend is running!",
   });
 });
+
+// ===============================
+// SKIN ANALYSIS API
+// ===============================
 
 app.post("/analyze-skin", async (req, res) => {
   try {
@@ -50,16 +59,20 @@ app.post("/analyze-skin", async (req, res) => {
       });
     }
 
+    // Remove base64 prefix
     const base64Image = image.replace(
       /^data:image\/\w+;base64,/,
       ""
     );
 
+    // Send image to Gemini
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash",
+
       contents: [
         {
           role: "user",
+
           parts: [
             {
               inlineData: {
@@ -67,6 +80,7 @@ app.post("/analyze-skin", async (req, res) => {
                 data: base64Image,
               },
             },
+
             {
               text: `
 Analyze this face image for a skincare application called GlowCare.
@@ -80,6 +94,7 @@ Return ONLY valid JSON in this exact format:
 }
 
 Possible skin types:
+
 - Oily
 - Dry
 - Combination
@@ -102,6 +117,7 @@ Keep the response short and practical.
 
     console.log("Gemini response:", text);
 
+    // Remove markdown code blocks if Gemini adds them
     const cleanedText = text
       .replace(/```json/g, "")
       .replace(/```/g, "")
@@ -110,6 +126,7 @@ Keep the response short and practical.
     const result = JSON.parse(cleanedText);
 
     res.json(result);
+
   } catch (error) {
     console.error("Gemini error:", error);
 
@@ -120,8 +137,12 @@ Keep the response short and practical.
   }
 });
 
+// ===============================
+// SERVER
+// ===============================
+
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Server running on port ${PORT}`);
 });
