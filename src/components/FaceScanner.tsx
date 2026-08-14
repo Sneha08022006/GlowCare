@@ -36,7 +36,7 @@ const analyzeFace = async () => {
 
     const imageData = canvas.toDataURL("image/jpeg", 0.8);
 
-    const response = await fetch("https://glowcare-js3s9.onrender.com/analyze-skin", {
+   const response = await fetch("https://glowcare-backend-gj8i.onrender.com/analyze-skin", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
