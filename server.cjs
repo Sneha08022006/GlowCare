@@ -7,9 +7,9 @@ dotenv.config();
 
 const app = express();
 
-// ===============================
+// =====================================
 // CORS CONFIGURATION
-// ===============================
+// =====================================
 
 app.use(
   cors({
@@ -19,25 +19,23 @@ app.use(
   })
 );
 
-app.options("*", cors());
-
-// ===============================
+// =====================================
 // BODY PARSER
-// ===============================
+// =====================================
 
 app.use(express.json({ limit: "10mb" }));
 
-// ===============================
+// =====================================
 // GEMINI AI
-// ===============================
+// =====================================
 
 const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY,
 });
 
-// ===============================
-// TEST ROUTE
-// ===============================
+// =====================================
+// TEST BACKEND
+// =====================================
 
 app.get("/", (req, res) => {
   res.json({
@@ -45,21 +43,22 @@ app.get("/", (req, res) => {
   });
 });
 
-// ===============================
+// =====================================
 // SKIN ANALYSIS API
-// ===============================
+// =====================================
 
 app.post("/analyze-skin", async (req, res) => {
   try {
     const { image } = req.body;
 
+    // Check image
     if (!image) {
       return res.status(400).json({
         error: "Image is required",
       });
     }
 
-    // Remove base64 prefix
+    // Remove base64 image prefix
     const base64Image = image.replace(
       /^data:image\/\w+;base64,/,
       ""
@@ -113,18 +112,21 @@ Keep the response short and practical.
       ],
     });
 
+    // Get Gemini response
     const text = response.text;
 
     console.log("Gemini response:", text);
 
-    // Remove markdown code blocks if Gemini adds them
+    // Remove markdown code blocks if present
     const cleanedText = text
       .replace(/```json/g, "")
       .replace(/```/g, "")
       .trim();
 
+    // Convert Gemini response to JSON
     const result = JSON.parse(cleanedText);
 
+    // Send result to frontend
     res.json(result);
 
   } catch (error) {
@@ -137,11 +139,11 @@ Keep the response short and practical.
   }
 });
 
-// ===============================
-// SERVER
-// ===============================
+// =====================================
+// START SERVER
+// =====================================
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 10000;
 
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server running on port ${PORT}`);
