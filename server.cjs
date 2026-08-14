@@ -11,7 +11,7 @@ app.use(
   cors({
     origin: "https://glowcare-1.onrender.com",
     methods: ["GET", "POST", "OPTIONS"],
-    allowedHeaders: ["Content-Type"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 app.use(express.json({ limit: "10mb" }));
